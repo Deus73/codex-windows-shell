@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="nl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Codex Shell</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="desktop" id="desktop">
+      <div class="wallpaper" aria-hidden="true">
+        <div class="glass-ribbon ribbon-a"></div>
+        <div class="glass-ribbon ribbon-b"></div>
+        <div class="window-mark">
+          <span></span><span></span><span></span><span></span>
+        </div>
+      </div>
+
+      <aside class="desktop-icons" aria-label="Snelkoppelingen">
+        <button class="desktop-icon active" data-focus="codexWindow">
+          <span class="tile-icon icon-codex"></span>
+          <span>Codex</span>
+        </button>
+        <button class="desktop-icon" data-focus="filesWindow">
+          <span class="tile-icon icon-folder"></span>
+          <span>Werkmap</span>
+        </button>
+        <button class="desktop-icon" data-focus="settingsWindow">
+          <span class="tile-icon icon-gear"></span>
+          <span>Instellingen</span>
+        </button>
+      </aside>
+
+      <main class="window codex-window focused" id="codexWindow" style="--x: 8vw; --y: 6vh; --w: min(1080px, 84vw); --h: min(720px, 78vh);">
+        <header class="titlebar">
+          <div class="title">
+            <span class="app-glyph"></span>
+            <span>Codex</span>
+          </div>
+          <div class="window-actions">
+            <button aria-label="Minimaliseren">-</button>
+            <button aria-label="Maximaliseren">□</button>
+            <button aria-label="Sluiten">x</button>
+          </div>
+        </header>
+
+        <section class="app-body">
+          <nav class="rail" aria-label="Navigatie">
+            <button class="rail-button selected" data-tab="chat" title="Chat">
+              <span class="icon chat"></span>
+            </button>
+            <button class="rail-button" data-tab="tasks" title="Taken">
+              <span class="icon tasks"></span>
+            </button>
+            <button class="rail-button" data-tab="history" title="Historie">
+              <span class="icon history"></span>
+            </button>
+          </nav>
+
+          <section class="workspace">
+            <div class="command-strip">
+              <label class="path-control">
+                <span>Werkmap</span>
+                <input id="workspaceInput" value="/home/godlike" spellcheck="false" />
+              </label>
+              <div class="mode-control" role="group" aria-label="Modus">
+                <button class="mode selected" data-mode="agent">Agent</button>
+                <button class="mode" data-mode="review">Review</button>
+                <button class="mode" data-mode="ask">Vraag</button>
+              </div>
+            </div>
+
+            <div class="tab-panel active" data-panel="chat">
+              <div class="conversation" id="conversation" aria-live="polite">
+                <article class="message assistant">
+                  <div class="avatar">C</div>
+                  <div class="bubble">
+                    <div class="meta">Codex Shell</div>
+                    <p>Typ een opdracht. Ik stuur die naar de lokale Codex CLI en toon de uitvoer hier in dit venster.</p>
+                  </div>
+                </article>
+              </div>
+
+              <form class="composer" id="composer">
+                <textarea id="promptInput" rows="3" placeholder="Vraag Codex om code te maken, bestanden te wijzigen, iets uit te leggen..." required></textarea>
+                <div class="composer-actions">
+                  <button type="button" id="clearButton" class="secondary">Leegmaken</button>
+                  <button type="submit" id="sendButton" class="primary">
+                    <span class="send-icon"></span>
+                    Uitvoeren
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <div class="tab-panel" data-panel="tasks">
+              <div class="task-grid">
+                <button class="task-card" data-prompt="Inspecteer deze werkmap en geef een korte samenvatting van de belangrijkste projecten.">
+                  <span class="tile-icon icon-search"></span>
+                  <strong>Project scannen</strong>
+                  <span>Laat Codex de map lezen en samenvatten.</span>
+                </button>
+                <button class="task-card" data-prompt="Zoek naar duidelijke fouten of verbeterpunten in dit project en geef concrete bestandsverwijzingen.">
+                  <span class="tile-icon icon-shield"></span>
+                  <strong>Code review</strong>
+                  <span>Vraag om risico's, bugs en ontbrekende tests.</span>
+                </button>
+                <button class="task-card" data-prompt="Maak een beknopt stappenplan voor de volgende veilige wijziging in dit project.">
+                  <span class="tile-icon icon-plan"></span>
+                  <strong>Plan maken</strong>
+                  <span>Krijg een korte route voordat je wijzigt.</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="tab-panel" data-panel="history">
+              <div class="history-list" id="historyList"></div>
+            </div>
+          </section>
+
+          <aside class="side-panel">
+            <div class="status-card">
+              <span class="status-dot" id="statusDot"></span>
+              <div>
+                <strong id="statusTitle">Klaar</strong>
+                <span id="statusText">Wacht op opdracht</span>
+              </div>
+            </div>
+            <div class="meter">
+              <span>Context</span>
+              <div><i id="contextMeter"></i></div>
+            </div>
+            <div class="quick-actions">
+              <button data-prompt="Wat is de beste volgende stap in deze werkmap?">Volgende stap</button>
+              <button data-prompt="Leg de structuur van dit project uit alsof ik snel wil bijdragen.">Leg project uit</button>
+              <button data-prompt="Welke commando's moet ik draaien om dit project lokaal te testen?">Testcommando's</button>
+            </div>
+          </aside>
+        </section>
+      </main>
+
+      <section class="window files-window" id="filesWindow" style="--x: 13vw; --y: 14vh; --w: 520px; --h: 430px;">
+        <header class="titlebar">
+          <div class="title"><span class="tile-icon icon-folder small"></span><span>Werkmap</span></div>
+          <div class="window-actions"><button>-</button><button>□</button><button>x</button></div>
+        </header>
+        <div class="file-shell">
+          <div class="address-bar">/home/godlike</div>
+          <div class="file-list">
+            <div><span class="tile-icon icon-folder small"></span> codex-windows-shell</div>
+            <div><span class="tile-icon icon-folder small"></span> Downloads</div>
+            <div><span class="tile-icon icon-folder small"></span> Documents</div>
+            <div><span class="tile-icon icon-file small"></span> package.json</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="window settings-window" id="settingsWindow" style="--x: 24vw; --y: 18vh; --w: 430px; --h: 360px;">
+        <header class="titlebar">
+          <div class="title"><span class="tile-icon icon-gear small"></span><span>Instellingen</span></div>
+          <div class="window-actions"><button>-</button><button>□</button><button>x</button></div>
+        </header>
+        <div class="settings-shell">
+          <label class="toggle-row">
+            <span>Compacte tekst</span>
+            <input type="checkbox" id="compactToggle" />
+          </label>
+          <label class="toggle-row">
+            <span>Transparante vensters</span>
+            <input type="checkbox" id="glassToggle" checked />
+          </label>
+          <label class="range-row">
+            <span>Interface schaal</span>
+            <input type="range" min="90" max="112" value="100" id="scaleRange" />
+          </label>
+        </div>
+      </section>
+
+      <div class="start-menu" id="startMenu">
+        <div class="start-header">Codex Shell</div>
+        <button data-focus="codexWindow"><span class="tile-icon icon-codex small"></span> Codex</button>
+        <button data-focus="filesWindow"><span class="tile-icon icon-folder small"></span> Werkmap</button>
+        <button data-focus="settingsWindow"><span class="tile-icon icon-gear small"></span> Instellingen</button>
+      </div>
+
+      <footer class="taskbar">
+        <button class="start-button" id="startButton" aria-label="Start">
+          <span class="window-logo"></span>
+        </button>
+        <button class="task-button active" data-focus="codexWindow"><span class="app-glyph"></span> Codex</button>
+        <button class="task-button" data-focus="filesWindow"><span class="tile-icon icon-folder small"></span> Werkmap</button>
+        <button class="task-button" data-focus="settingsWindow"><span class="tile-icon icon-gear small"></span> Settings</button>
+        <div class="tray">
+          <span id="clock">--:--</span>
+        </div>
+      </footer>
+    </div>
+    <script src="/app.js"></script>
+  </body>
+</html>
